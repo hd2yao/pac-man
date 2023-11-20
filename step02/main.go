@@ -42,8 +42,20 @@ func initialise() {
     }
 }
 
+func cleanup() {
+    cookedTerm := exec.Command("stty", "-cbreak", "echo")
+    cookedTerm.Stdin = os.Stdin
+
+    err := cookedTerm.Run()
+    if err != nil {
+        log.Fatalln("unable to restore cooked mode:", err)
+    }
+}
+
 func main() {
     // initialize game
+    initialise()
+    defer cleanup()
 
     // load resources
     err := loadMaze("maze01.txt")
