@@ -85,15 +85,20 @@ func main() {
         printScreen()
 
         // process input
+        input, err := readInput()
+        if err != nil {
+            log.Print("error reading input:", err)
+            break
+        }
 
         // process movement
 
         // process collisions
 
         // check game over
-
-        // Temp: break infinite loop
-        break
+        if input == "ESC" {
+            break
+        }
 
         // repeat
     }
