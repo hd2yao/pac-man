@@ -3,13 +3,14 @@ package main
 import (
     "bufio"
     "fmt"
+    "log"
     "os"
 )
 
 var maze []string
 
 func loadMaze(file string) error {
-    f, err := os.Open(file)
+    f, err := os.Open("step01/" + file)
     if err != nil {
         return err
     }
@@ -31,5 +32,31 @@ func printScreen() {
 }
 
 func main() {
+    // initialize game
 
+    // load resources
+    err := loadMaze("maze01.txt")
+    if err != nil {
+        log.Println("failed to load maze:", err)
+        return
+    }
+
+    // game loop
+    for {
+        // update screen
+        printScreen()
+
+        // process input
+
+        // process movement
+
+        // process collisions
+
+        // check game over
+
+        // Temp: break infinite loop
+        break
+
+        // repeat
+    }
 }
