@@ -6,6 +6,8 @@ import (
     "log"
     "os"
     "os/exec"
+
+    "github.com/danicat/simpleansi"
 )
 
 var maze []string
@@ -27,6 +29,7 @@ func loadMaze(file string) error {
 }
 
 func printScreen() {
+    simpleansi.ClearScreen()
     for _, line := range maze {
         fmt.Println(line)
     }
