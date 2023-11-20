@@ -5,6 +5,7 @@ import (
     "fmt"
     "log"
     "os"
+    "os/exec"
 )
 
 var maze []string
@@ -28,6 +29,16 @@ func loadMaze(file string) error {
 func printScreen() {
     for _, line := range maze {
         fmt.Println(line)
+    }
+}
+
+func initialise() {
+    cbTerm := exec.Command("stty", "cbreak", "-echo")
+    cbTerm.Stdin = os.Stdin
+
+    err := cbTerm.Run()
+    if err != nil {
+        log.Fatalln("unable to activate cbreak mode:", err)
     }
 }
 
