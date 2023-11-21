@@ -229,6 +229,15 @@ func moveGhosts() {
     }
 }
 
+func moveCursor(row, col int) {
+    if cfg.UseEmoji {
+        // 将 col 值缩放2倍，确保每个角色都定位在正确的位置，不过会让迷宫看起来更大
+        simpleansi.MoveCursor(row, col*2)
+    } else {
+        simpleansi.MoveCursor(row, col)
+    }
+}
+
 func main() {
     // initialize game
     initialise()
