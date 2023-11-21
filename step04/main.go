@@ -4,6 +4,7 @@ import (
     "bufio"
     "fmt"
     "log"
+    "math/rand"
     "os"
     "os/exec"
 
@@ -161,6 +162,17 @@ func makeMove(oldRow, oldCol int, dir string) (newRow, newCol int) {
 
 func movePlayer(dir string) {
     player.row, player.col = makeMove(player.row, player.col, dir)
+}
+
+func drawDirection() string {
+    dir := rand.Intn(4)
+    move := map[int]string{
+        0: "UP",
+        1: "DOWN",
+        2: "RIGHT",
+        3: "LEFT",
+    }
+    return move[dir]
 }
 
 func main() {
