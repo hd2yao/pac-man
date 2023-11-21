@@ -180,6 +180,7 @@ func main() {
         }
 
         // process movement
+        movePlayer(input)
 
         // process collisions
 
