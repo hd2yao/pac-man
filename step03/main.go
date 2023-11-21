@@ -10,6 +10,13 @@ import (
     "github.com/danicat/simpleansi"
 )
 
+// define sprite struct to tracking 2D coordinates(row and column) information
+type sprite struct {
+    row int
+    col int
+}
+
+var player sprite
 var maze []string
 
 func loadMaze(file string) error {
@@ -23,6 +30,16 @@ func loadMaze(file string) error {
     for scanner.Scan() {
         line := scanner.Text()
         maze = append(maze, line)
+    }
+
+    // traverse each character of the maze and create a new player when it locates a `P`
+    for row, line := range maze {
+        for col, char := range line {
+            switch char {
+            case 'P':
+                player = sprite{row, col}
+            }
+        }
     }
 
     return nil
