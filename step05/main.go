@@ -170,6 +170,13 @@ func makeMove(oldRow, oldCol int, dir string) (newRow, newCol int) {
 
 func movePlayer(dir string) {
     player.row, player.col = makeMove(player.row, player.col, dir)
+    switch maze[player.row][player.col] {
+    case '.':
+        numDots--
+        score++
+        // Remove dot from maze
+        maze[player.row] = maze[player.row][0:player.col] + " " + maze[player.row][player.col+1:]
+    }
 }
 
 func drawDirection() string {
