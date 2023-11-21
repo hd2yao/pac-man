@@ -92,22 +92,22 @@ func printScreen() {
         for _, char := range line {
             switch char {
             case '#':
-                fallthrough
+                fmt.Print(simpleansi.WithBlueBackground(cfg.Wall))
             case '.':
-                fmt.Printf("%c", char)
+                fmt.Print(cfg.Dot)
             default:
-                fmt.Print(" ")
+                fmt.Print(cfg.Space)
             }
         }
         fmt.Println()
     }
 
     simpleansi.MoveCursor(player.row, player.col)
-    fmt.Print("P")
+    fmt.Print(cfg.Player)
 
     for _, ghost := range ghosts {
         simpleansi.MoveCursor(ghost.row, ghost.col)
-        fmt.Print("G")
+        fmt.Print(cfg.Ghost)
     }
 
     // 将光标移出迷宫绘图区域
