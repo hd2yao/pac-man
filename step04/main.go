@@ -175,6 +175,13 @@ func drawDirection() string {
     return move[dir]
 }
 
+func moveGhosts() {
+    for _, ghost := range ghosts {
+        dir := drawDirection()
+        ghost.row, ghost.col = makeMove(ghost.row, ghost.col, dir)
+    }
+}
+
 func main() {
     // initialize game
     initialise()
@@ -201,6 +208,7 @@ func main() {
 
         // process movement
         movePlayer(input)
+        moveGhosts()
 
         // process collisions
 
