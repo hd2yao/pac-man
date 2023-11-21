@@ -3,6 +3,7 @@ package main
 import (
     "bufio"
     "encoding/json"
+    "flag"
     "fmt"
     "log"
     "math/rand"
@@ -11,6 +12,11 @@ import (
     "time"
 
     "github.com/danicat/simpleansi"
+)
+
+var (
+    configFile = flag.String("config-file", "config.json", "path to custom configuration file")
+    mazeFile   = flag.String("maze-flag", "maze01.txt", "path to custom maze file")
 )
 
 // Config holds the emoji configuration
@@ -247,6 +253,8 @@ func moveCursor(row, col int) {
 }
 
 func main() {
+    flag.Parse()
+
     // initialize game
     initialise()
     defer cleanup()
