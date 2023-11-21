@@ -51,8 +51,10 @@ func loadConfig(file string) error {
 
 // define sprite struct to tracking 2D coordinates(row and column) information
 type sprite struct {
-    row int
-    col int
+    row      int
+    col      int
+    startRow int
+    startCol int
 }
 
 var player sprite
@@ -80,9 +82,9 @@ func loadMaze(file string) error {
         for col, char := range line {
             switch char {
             case 'P':
-                player = sprite{row, col}
+                player = sprite{row, col, row, col}
             case 'G':
-                ghosts = append(ghosts, &sprite{row, col})
+                ghosts = append(ghosts, &sprite{row, col, row, col})
             case '.':
                 numDots++
             }
