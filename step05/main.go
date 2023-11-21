@@ -20,6 +20,9 @@ type sprite struct {
 var player sprite
 var ghosts []*sprite
 var maze []string
+var score int
+var numDots int
+var lives = 1
 
 func loadMaze(file string) error {
     f, err := os.Open("step01/" + file)
@@ -42,6 +45,8 @@ func loadMaze(file string) error {
                 player = sprite{row, col}
             case 'G':
                 ghosts = append(ghosts, &sprite{row, col})
+            case '.':
+                numDots++
             }
         }
     }
@@ -55,6 +60,8 @@ func printScreen() {
         for _, char := range line {
             switch char {
             case '#':
+                fallthrough
+            case '.':
                 fmt.Printf("%c", char)
             default:
                 fmt.Print(" ")
@@ -73,6 +80,7 @@ func printScreen() {
 
     // 将光标移出迷宫绘图区域
     simpleansi.MoveCursor(len(maze)+1, 0)
+    fmt.Println("Score:", score, "\tLives:", lives)
 }
 
 func initialise() {
