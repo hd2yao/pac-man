@@ -101,6 +101,8 @@ func printScreen() {
                 fmt.Print(simpleansi.WithBlueBackground(cfg.Wall))
             case '.':
                 fmt.Print(cfg.Dot)
+            case 'X':
+                fmt.Print(cfg.Pill)
             default:
                 fmt.Print(cfg.Space)
             }
@@ -108,16 +110,16 @@ func printScreen() {
         fmt.Println()
     }
 
-    simpleansi.MoveCursor(player.row, player.col)
+    moveCursor(player.row, player.col)
     fmt.Print(cfg.Player)
 
     for _, ghost := range ghosts {
-        simpleansi.MoveCursor(ghost.row, ghost.col)
+        moveCursor(ghost.row, ghost.col)
         fmt.Print(cfg.Ghost)
     }
 
     // 将光标移出迷宫绘图区域
-    simpleansi.MoveCursor(len(maze)+1, 0)
+    moveCursor(len(maze)+1, 0)
     fmt.Println("Score:", score, "\tLives:", lives)
 }
 
@@ -310,7 +312,7 @@ func main() {
         printScreen()
 
         // check game over
-        if numDots == 0 || lives == 0 {
+        if numDots == 0 || lives <= 0 {
             if lives == 0 {
                 moveCursor(player.row, player.col)
                 fmt.Print(cfg.Death)
