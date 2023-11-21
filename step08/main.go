@@ -34,7 +34,7 @@ type Config struct {
 var cfg Config
 
 func loadConfig(file string) error {
-    f, err := os.Open("step07/" + file)
+    f, err := os.Open(file)
     if err != nil {
         return err
     }
@@ -63,7 +63,7 @@ var numDots int
 var lives = 1
 
 func loadMaze(file string) error {
-    f, err := os.Open("step01/" + file)
+    f, err := os.Open(file)
     if err != nil {
         return err
     }
@@ -260,13 +260,13 @@ func main() {
     defer cleanup()
 
     // load resources
-    err := loadMaze("maze01.txt")
+    err := loadMaze(*mazeFile)
     if err != nil {
         log.Println("failed to load maze:", err)
         return
     }
 
-    err = loadConfig("config.json")
+    err = loadConfig(*configFile)
     if err != nil {
         log.Println("failed to load configuration:", err)
         return
