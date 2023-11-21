@@ -23,14 +23,16 @@ var (
 
 // Config holds the emoji configuration
 type Config struct {
-    Player   string `json:"player"`
-    Ghost    string `json:"ghost"`
-    Wall     string `json:"wall"`
-    Dot      string `json:"dot"`
-    Pill     string `json:"pill"`
-    Death    string `json:"death"`
-    Space    string `json:"space"`
-    UseEmoji bool   `json:"use_emoji"`
+    Player           string        `json:"player"`
+    Ghost            string        `json:"ghost"`
+    Wall             string        `json:"wall"`
+    Dot              string        `json:"dot"`
+    Pill             string        `json:"pill"`
+    Death            string        `json:"death"`
+    Space            string        `json:"space"`
+    UseEmoji         bool          `json:"use_emoji"`
+    GhostBlue        string        `json:"ghost_blue"`
+    PillDurationSecs time.Duration `json:"pill_duration_secs"`
 }
 
 var cfg Config
