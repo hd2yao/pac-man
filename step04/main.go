@@ -17,6 +17,7 @@ type sprite struct {
 }
 
 var player sprite
+var ghosts []*sprite
 var maze []string
 
 func loadMaze(file string) error {
@@ -32,12 +33,14 @@ func loadMaze(file string) error {
         maze = append(maze, line)
     }
 
-    // traverse each character of the maze and create a new player when it locates a `P`
+    // traverse each character of the maze
     for row, line := range maze {
         for col, char := range line {
             switch char {
             case 'P':
                 player = sprite{row, col}
+            case 'G':
+                ghosts = append(ghosts, &sprite{row, col})
             }
         }
     }
@@ -61,6 +64,11 @@ func printScreen() {
 
     simpleansi.MoveCursor(player.row, player.col)
     fmt.Print("P")
+
+    for _, ghost := range ghosts {
+        simpleansi.MoveCursor(ghost.row, ghost.col)
+        fmt.Print("G")
+    }
 
     // 将光标移出迷宫绘图区域
     simpleansi.MoveCursor(len(maze)+1, 0)
