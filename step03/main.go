@@ -82,9 +82,63 @@ func readInput() (string, error) {
 
     if cnt == 1 && buffer[0] == 0x1b {
         return "ESC", nil
+    } else if cnt >= 3 { // 方向键的转义序列有 3 个字节长
+        // 以 ESC+[ 开头，然后是 A~D 之间的字母
+        if buffer[0] == 0x1b && buffer[1] == '[' {
+            switch buffer[2] {
+            case 'A':
+                return "UP", nil
+            case 'B':
+                return "DOWN", nil
+            case 'C':
+                return "RIGHT", nil
+            case 'D':
+                return "LEFT", nil
+            }
+        }
     }
 
     return "", nil
+}
+
+func makeMove(oldRow, oldCol int, dir string) (newRow, newCol int) {
+    newRow, newCol = oldRow, oldCol
+
+    switch dir {
+    case "UP":
+        newRow = newRow - 1
+        if newRow < 0 {
+            // 再次回到最下面一行
+            newRow = len(maze) - 1
+        }
+    case "DOWN":
+        newRow = newRow + 1
+        if newRow == len(maze) {
+            newRow = 0
+        }
+    case "RIGHT":
+        newCol = newCol + 1
+        if newCol == len(maze[0]) {
+            newCol = 0
+        }
+    case "LEFT":
+        newCol = newCol - 1
+        if newCol < 0 {
+            newCol = len(maze[0]) - 1
+        }
+    }
+
+    // 先尝试移动，如果新的位置碰巧遇到墙（#），则移动呗取消
+    if maze[newRow][newCol] == '#' {
+        newRow = oldRow
+        newCol = oldCol
+    }
+
+    return
+}
+
+func movePlayer(dir string) {
+    player.row, player.col = makeMove(player.row, player.col, dir)
 }
 
 func main() {
