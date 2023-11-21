@@ -48,8 +48,22 @@ func loadMaze(file string) error {
 func printScreen() {
     simpleansi.ClearScreen()
     for _, line := range maze {
-        fmt.Println(line)
+        for _, char := range line {
+            switch char {
+            case '#':
+                fmt.Printf("%c", char)
+            default:
+                fmt.Print(" ")
+            }
+        }
+        fmt.Println()
     }
+
+    simpleansi.MoveCursor(player.row, player.col)
+    fmt.Print("P")
+
+    // 将光标移出迷宫绘图区域
+    simpleansi.MoveCursor(len(maze)+1, 0)
 }
 
 func initialise() {
