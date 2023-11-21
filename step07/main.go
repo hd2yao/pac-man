@@ -202,12 +202,20 @@ func makeMove(oldRow, oldCol int, dir string) (newRow, newCol int) {
 
 func movePlayer(dir string) {
     player.row, player.col = makeMove(player.row, player.col, dir)
+
+    // Remove dot from maze
+    removeDot := func(row, col int) {
+        maze[row] = maze[row][0:col] + " " + maze[row][col+1:]
+    }
+
     switch maze[player.row][player.col] {
     case '.':
         numDots--
         score++
-        // Remove dot from maze
-        maze[player.row] = maze[player.row][0:player.col] + " " + maze[player.row][player.col+1:]
+        removeDot(player.row, player.col)
+    case 'X':
+        score += 10
+        removeDot(player.row, player.col)
     }
 }
 
@@ -294,7 +302,12 @@ func main() {
         printScreen()
 
         // check game over
-        if numDots == 0 || lives <= 0 {
+        if numDots == 0 || lives == 0 {
+            if lives == 0 {
+                moveCursor(player.row, player.col)
+                fmt.Print(cfg.Death)
+                moveCursor(len(maze)+2, 0)
+            }
             break
         }
 
