@@ -7,6 +7,7 @@ import (
     "math/rand"
     "os"
     "os/exec"
+    "time"
 
     "github.com/danicat/simpleansi"
 )
@@ -209,34 +210,49 @@ func main() {
         return
     }
 
+    // process input (async)
+    input := make(chan string)
+    go func(ch chan<- string) {
+        for {
+            input, err := readInput()
+            if err != nil {
+                log.Print("error reading input:", err)
+                ch <- "ESC"
+            }
+            ch <- input
+        }
+    }(input)
+
     // game loop
     for {
-        // update screen
-        printScreen()
-
-        // process input
-        input, err := readInput()
-        if err != nil {
-            log.Print("error reading input:", err)
-            break
+        // process movement
+        select {
+        case inp := <-input:
+            if inp == "ESC" {
+                lives = 0
+            }
+            movePlayer(inp)
+        default:
         }
 
-        // process movement
-        movePlayer(input)
         moveGhosts()
 
         // process collisions
         for _, ghost := range ghosts {
             if player == *ghost {
-                lives = 0
+                lives--
             }
         }
 
+        // update screen
+        printScreen()
+
         // check game over
-        if input == "ESC" || numDots == 0 || lives <= 0 {
+        if numDots == 0 || lives <= 0 {
             break
         }
 
         // repeat
+        time.Sleep(200 * time.Millisecond)
     }
 }
