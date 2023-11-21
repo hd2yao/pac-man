@@ -62,7 +62,7 @@ var ghosts []*sprite
 var maze []string
 var score int
 var numDots int
-var lives = 1
+var lives = 3
 
 func loadMaze(file string) error {
     f, err := os.Open(file)
@@ -305,8 +305,15 @@ func main() {
 
         // process collisions
         for _, ghost := range ghosts {
-            if player == *ghost {
+            if player.row == ghost.row && player.col == ghost.col {
                 lives--
+                if lives != 0 {
+                    moveCursor(player.row, player.col)
+                    fmt.Print(cfg.Death)
+                    moveCursor(len(maze)+2, 0)
+                    time.Sleep(1000 * time.Millisecond) //dramatic pause before resetting player position
+                    player.row, player.col = player.startRow, player.startCol
+                }
             }
         }
 
