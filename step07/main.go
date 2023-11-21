@@ -2,6 +2,7 @@ package main
 
 import (
     "bufio"
+    "encoding/json"
     "fmt"
     "log"
     "math/rand"
@@ -11,6 +12,36 @@ import (
 
     "github.com/danicat/simpleansi"
 )
+
+// Config holds the emoji configuration
+type Config struct {
+    Player   string `json:"player"`
+    Ghost    string `json:"ghost"`
+    Wall     string `json:"wall"`
+    Dot      string `json:"dot"`
+    Pill     string `json:"pill"`
+    Death    string `json:"death"`
+    Space    string `json:"space"`
+    UseEmoji bool   `json:"use_emoji"`
+}
+
+var cfg Config
+
+func loadConfig(file string) error {
+    f, err := os.Open("step07/" + file)
+    if err != nil {
+        return err
+    }
+    defer f.Close()
+
+    decoder := json.NewDecoder(f)
+    err = decoder.Decode(&cfg)
+    if err != nil {
+        return err
+    }
+
+    return nil
+}
 
 // define sprite struct to tracking 2D coordinates(row and column) information
 type sprite struct {
@@ -207,6 +238,12 @@ func main() {
     err := loadMaze("maze01.txt")
     if err != nil {
         log.Println("failed to load maze:", err)
+        return
+    }
+
+    err = loadConfig("config.json")
+    if err != nil {
+        log.Println("failed to load configuration:", err)
         return
     }
 
