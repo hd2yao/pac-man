@@ -2,6 +2,7 @@ package main
 
 import (
     "bufio"
+    "bytes"
     "encoding/json"
     "flag"
     "fmt"
@@ -9,6 +10,7 @@ import (
     "math/rand"
     "os"
     "os/exec"
+    "strconv"
     "time"
 
     "github.com/danicat/simpleansi"
@@ -60,7 +62,7 @@ var ghosts []*sprite
 var maze []string
 var score int
 var numDots int
-var lives = 1
+var lives = 3
 
 func loadMaze(file string) error {
     f, err := os.Open(file)
@@ -120,7 +122,13 @@ func printScreen() {
 
     // 将光标移出迷宫绘图区域
     moveCursor(len(maze)+1, 0)
-    fmt.Println("Score:", score, "\tLives:", lives)
+
+    livesRemaining := strconv.Itoa(lives) //converts lives int to a string
+    if cfg.UseEmoji {
+        livesRemaining = getLivesAsEmoji()
+    }
+
+    fmt.Println("Score:", score, "\tLives:", livesRemaining)
 }
 
 func initialise() {
@@ -131,6 +139,14 @@ func initialise() {
     if err != nil {
         log.Fatalln("unable to activate cbreak mode:", err)
     }
+}
+
+func getLivesAsEmoji() string {
+    buf := bytes.Buffer{}
+    for i := lives; i > 0; i-- {
+        buf.WriteString(cfg.Player)
+    }
+    return buf.String()
 }
 
 func cleanup() {
