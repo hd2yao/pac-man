@@ -2,6 +2,7 @@ package main
 
 import (
     "bufio"
+    "bytes"
     "encoding/json"
     "flag"
     "fmt"
@@ -9,6 +10,7 @@ import (
     "math/rand"
     "os"
     "os/exec"
+    "strconv"
     "time"
 
     "github.com/danicat/simpleansi"
@@ -120,9 +122,22 @@ func printScreen() {
         fmt.Print(cfg.Ghost)
     }
 
-    // 将光标移出迷宫绘图区域
     moveCursor(len(maze)+1, 0)
-    fmt.Println("Score:", score, "\tLives:", lives)
+
+    livesRemaining := strconv.Itoa(lives)
+    if cfg.UseEmoji {
+        livesRemaining = getLivesAsEmoji()
+    }
+    fmt.Println("Score:", score, "\tLives:", livesRemaining)
+}
+
+// concatenate the correct number of player emojis based on lives
+func getLivesAsEmoji() string {
+    buf := bytes.Buffer{}
+    for i := lives; i > 0; i-- {
+        buf.WriteString(cfg.Player)
+    }
+    return buf.String()
 }
 
 func initialise() {
