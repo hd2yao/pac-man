@@ -53,14 +53,28 @@ func loadConfig(file string) error {
     return nil
 }
 
+type GhostStatus string
+
+const (
+    GhostStatusNormal GhostStatus = "Normal"
+    GhostStatusBlue   GhostStatus = "Blue"
+)
+
 // define sprite struct to tracking 2D coordinates(row and column) information
 type sprite struct {
-    row int
-    col int
+    row      int
+    col      int
+    startRow int
+    startCol int
+}
+
+type ghost struct {
+    position sprite
+    status   GhostStatus
 }
 
 var player sprite
-var ghosts []*sprite
+var ghosts []*ghost
 var maze []string
 var score int
 var numDots int
@@ -84,9 +98,9 @@ func loadMaze(file string) error {
         for col, char := range line {
             switch char {
             case 'P':
-                player = sprite{row, col}
+                player = sprite{row, col, row, col}
             case 'G':
-                ghosts = append(ghosts, &sprite{row, col})
+                ghosts = append(ghosts, &ghost{sprite{row, col, row, col}, GhostStatusNormal})
             case '.':
                 numDots++
             }
@@ -118,8 +132,12 @@ func printScreen() {
     fmt.Print(cfg.Player)
 
     for _, ghost := range ghosts {
-        moveCursor(ghost.row, ghost.col)
-        fmt.Print(cfg.Ghost)
+        moveCursor(ghost.position.row, ghost.position.col)
+        if ghost.status == GhostStatusNormal {
+            fmt.Print(cfg.Ghost)
+        } else if ghost.status == GhostStatusBlue {
+            fmt.Print(cfg.GhostBlue)
+        }
     }
 
     // 将光标移出迷宫绘图区域
@@ -242,6 +260,20 @@ func movePlayer(dir string) {
     case 'X':
         score += 10
         removeDot(player.row, player.col)
+        go processPill()
+    }
+}
+
+var pillTimer *time.Timer
+
+func processPill() {
+    for _, ghost := range ghosts {
+        ghost.status = GhostStatusBlue
+    }
+    pillTimer = time.NewTimer(time.Second * cfg.PillDurationSecs)
+    <-pillTimer.C
+    for _, ghost := range ghosts {
+        ghost.status = GhostStatusNormal
     }
 }
 
@@ -259,7 +291,7 @@ func drawDirection() string {
 func moveGhosts() {
     for _, ghost := range ghosts {
         dir := drawDirection()
-        ghost.row, ghost.col = makeMove(ghost.row, ghost.col, dir)
+        ghost.position.row, ghost.position.col = makeMove(ghost.position.row, ghost.position.col, dir)
     }
 }
 
@@ -321,8 +353,15 @@ func main() {
 
         // process collisions
         for _, ghost := range ghosts {
-            if player == *ghost {
+            if player.row == ghost.position.row && player.col == ghost.position.col {
                 lives--
+                if lives != 0 {
+                    moveCursor(player.row, player.col)
+                    fmt.Print(cfg.Death)
+                    moveCursor(len(maze)+2, 0)
+                    time.Sleep(1000 * time.Millisecond) //dramatic pause before resetting player position
+                    player.row, player.col = player.startRow, player.startCol
+                }
             }
         }
 
