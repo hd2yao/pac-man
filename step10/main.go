@@ -266,22 +266,21 @@ func movePlayer(dir string) {
 }
 
 var pillTimer *time.Timer
+var pillMx sync.Mutex
 
 func processPill() {
-    //for _, ghost := range ghosts {
-    //    ghost.status = GhostStatusBlue
-    //}
+    pillMx.Lock()
     updateGhosts(ghosts, GhostStatusBlue)
     if pillTimer != nil {
         pillTimer.Stop()
     }
     pillTimer = time.NewTimer(time.Second * cfg.PillDurationSecs)
+    pillMx.Unlock()
     <-pillTimer.C
-    //for _, ghost := range ghosts {
-    //    ghost.status = GhostStatusNormal
-    //}
+    pillMx.Lock()
     pillTimer.Stop()
     updateGhosts(ghosts, GhostStatusNormal)
+    pillMx.Unlock()
 }
 
 var ghostsStatusMx sync.RWMutex
