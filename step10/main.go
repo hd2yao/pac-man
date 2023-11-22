@@ -11,6 +11,7 @@ import (
     "os"
     "os/exec"
     "strconv"
+    "sync"
     "time"
 
     "github.com/danicat/simpleansi"
@@ -267,13 +268,29 @@ func movePlayer(dir string) {
 var pillTimer *time.Timer
 
 func processPill() {
-    for _, ghost := range ghosts {
-        ghost.status = GhostStatusBlue
+    //for _, ghost := range ghosts {
+    //    ghost.status = GhostStatusBlue
+    //}
+    updateGhosts(ghosts, GhostStatusBlue)
+    if pillTimer != nil {
+        pillTimer.Stop()
     }
     pillTimer = time.NewTimer(time.Second * cfg.PillDurationSecs)
     <-pillTimer.C
+    //for _, ghost := range ghosts {
+    //    ghost.status = GhostStatusNormal
+    //}
+    pillTimer.Stop()
+    updateGhosts(ghosts, GhostStatusNormal)
+}
+
+var ghostsStatusMx sync.RWMutex
+
+func updateGhosts(ghosts []*ghost, ghostStatus GhostStatus) {
+    ghostsStatusMx.Lock()
+    defer ghostsStatusMx.Unlock()
     for _, ghost := range ghosts {
-        ghost.status = GhostStatusNormal
+        ghost.status = ghostStatus
     }
 }
 
